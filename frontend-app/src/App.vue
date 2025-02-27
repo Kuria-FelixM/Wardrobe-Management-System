@@ -1,85 +1,49 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+<script setup>
+import { RouterLink } from 'vue-router';
+import { useAuthStore } from "@/stores/auth";
+import { onMounted } from "vue";
+
+const authStore = useAuthStore()
+
+onMounted(() => {
+  authStore.getUser();
+  });
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <div>
+    <nav class="bg-blue-900 text-white p-10 flex items-center justify-center space-x-10">
+  <div>
+    <RouterLink :to="{ name: 'home' }" class="text-white text-lg hover:text-gray-300">Home</RouterLink>
+  </div>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+  <div class="flex items-center space-x-6">
+    <p v-if="authStore.user" class="text-lg font-semibold">Welcome Back {{ authStore.user.name }}</p>
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+    <div v-if="authStore.user" class="flex space-x-6">
+      <RouterLink :to="{ name: 'create' }" class="text-white text-lg hover:text-gray-300">Add Clothing</RouterLink>
     </div>
-  </header>
 
-  <RouterView />
+    <div v-if="authStore.user">
+      <form @submit.prevent="authStore.logout">
+        <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Logout</button>
+      </form>
+
+  
+    </div>
+
+    <div v-else class="flex space-x-6">
+      <RouterLink :to="{ name: 'register' }" class="text-white text-lg hover:text-gray-300">Register</RouterLink>
+      <RouterLink :to="{ name: 'login' }" class="text-white text-lg hover:text-gray-300">Login</RouterLink>
+    </div>
+    
+  </div>
+</nav>
+
+
+    <main class="p-4">
+      <RouterView />
+    </main>
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-</style>
